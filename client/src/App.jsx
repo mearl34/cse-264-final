@@ -1,23 +1,34 @@
 import {useState, useEffect} from 'react'
+import Home from './components/Home'
 
 
 function App() {
   const [apiStatus, setAPIStatus] = useState()
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:3000/up')
-    .then(res => res.json())
-    .then(result => {
-      console.log(result.status)
-      setAPIStatus(result)
-  })
+    // checking if the user is already logged in when the app loads
+    fetch('http://localhost:5000/auth/me', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setUser(data))
+      .catch(() => setUser(null))
   }, [])
+
+  const handleLogin = () => {
+    window.location.href = 'http://localhost:5000/auth/google'
+  }
 
   
   return (
     <div>
-    <h1>To get started, begin editing SRC/App.js</h1>
-    {apiStatus ? <h2>Testing app end point: <div style={{color: apiStatus.status === 'up' ? 'green':'red'}}>{apiStatus.status}</div></h2>:null }
+      {user ? (
+        <Home user={user} />
+      ) : (
+        <div>
+          <h1>Bookworm📖🪱</h1>
+          <button onClick={handleLogin}>Sign in with Google</button>
+        </div>
+      )}
     </div>
   )
    
