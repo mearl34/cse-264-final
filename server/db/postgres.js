@@ -59,8 +59,11 @@ export const searchUsers = async (username) => {
   return res.rows
 }
 
+
+
+
 //edit a user, replacing all fields with input data
-export const editUser = async (uid, gmail, gid, username, pfp, pronouns, is_private) => {
+export const editUser = async (uid,gmail,gid,username,pfp,pronouns,is_private) => {
   const text = `
     UPDATE users
     SET 
@@ -69,28 +72,27 @@ export const editUser = async (uid, gmail, gid, username, pfp, pronouns, is_priv
       username = $3,
       pfp = $4,
       pronouns = $5,
-      is_private = $7
-    WHERE uid = $6
+      is_private = $6
+    WHERE uid = $7
     RETURNING *;
   `
 
-  const values = [gmail, gid, username, pfp, pronouns, uid, is_private]
+  const values = [gmail, gid, username, pfp, pronouns, is_private, uid]
 
   const res = await query(text, values)
   return res.rows[0]
 }
 
-
 //////////////////////////////////////List entry//////////////////////////////
 
-export const createEntry = async (uid, book_id, status, rating) => {
+export const createEntry = async (user_id, book_id, status, rating) => {
   const text = `
-    INSERT INTO list_entries (uid, book_id, status, rating)
+    INSERT INTO list_entries (user_id, book_id, status, rating)
     VALUES ($1, $2, $3, $4)
     RETURNING *;
   `
 
-  const values = [uid, book_id, status, rating]
+  const values = [user_id, book_id, status, rating]
 
   const res = await query(text, values)
   return res.rows[0]
@@ -103,7 +105,7 @@ export const editEntry = async (uid, book_id, status, rating) => {
     SET 
       status = $1,
       rating = $2
-    WHERE uid = $3 AND book_id = $4
+    WHERE user_id = $3 AND book_id = $4
     RETURNING *;
   `
 
@@ -117,7 +119,7 @@ export const editEntry = async (uid, book_id, status, rating) => {
 export const deleteEntry = async (uid, book_id) => {
   const text = `
     DELETE FROM list_entries
-    WHERE uid = $1 AND book_id = $2
+    WHERE user_id = $1 AND book_id = $2
     RETURNING *;
   `
 
@@ -130,7 +132,7 @@ export const getEntries = async (uid) => {
   const text = `
     SELECT *
     FROM list_entries
-    WHERE uid = $1;
+    WHERE user_id = $1;
   `
 
   const res = await query(text, [uid])
