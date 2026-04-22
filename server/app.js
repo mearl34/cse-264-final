@@ -4,6 +4,7 @@ import 'dotenv/config'
 import session from "express-session";
 import passport from "passport";
 import authRoutes from "./auth.js";
+import bookRoutes from "./books.js";
 
 import { query, searchUsers,getUser, addUser, editUser, deleteUser ,createEntry , editEntry , deleteEntry } from './db/postgres.js';
 
@@ -27,6 +28,8 @@ app.use(passport.session());
 
 //auth routes
 app.use("/auth", authRoutes);
+
+app.use("/books", bookRoutes)
 
 
 // base route

@@ -1,32 +1,32 @@
-import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-
-function CustomizedInputBase() {
-  return (
-    <Paper
-      component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
-    >
-      <InputBase
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Search"
-        inputProps={{ 'aria-label': 'Search' }}
-      />
-      <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-        <SearchIcon />
-      </IconButton>
-    </Paper>
-    
-  );
-}
+import { useState } from 'react';
+import BookSearch from '../components/BookSearch';
 
 function Home({ user }) {
+  const [books, setBooks] = useState([]);
+
+  const handleSearch = async (query) => {
+    const res = await fetch(`http://localhost:5000/books/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    setBooks(data);
+  };
+
   return (
     <div>
       <h1>Welcome to bookworm yay!</h1>
-      <CustomizedInputBase/>
+      <BookSearch onSearch={handleSearch} />
+      <ul>
+        {books.map((book) => (
+        <li key={book.id} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+          {book.thumbnail && (
+            <img src={book.thumbnail} alt={book.title} width={60} />
+          )}
+          <div>
+            <strong>{book.title}</strong>
+            <p>{book.authors.join(', ')}</p>
+          </div>
+        </li>
+      ))}
+      </ul>
     </div>
   )
 }
