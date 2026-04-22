@@ -114,10 +114,10 @@ export const editEntry = async (uid, book_id, status, rating) => {
 }
 
 
-export const deleteEntry = async (uid, book_id) => {
+export const deleteEntry = async (id) => {
   const text = `
     DELETE FROM list_entries
-    WHERE uid = $1 AND book_id = $2
+    WHERE id = $1
     RETURNING *;
   `
 
