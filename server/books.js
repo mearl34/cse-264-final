@@ -8,17 +8,19 @@ router.get("/search", async (req, res) => {
 
   try {
     const response = await fetch(
-      `https://gutendex.com/books?search=${encodeURIComponent(q)}`
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}`
     );
     const data = await response.json();
-    const books = data.results?.map((book) => ({
-      id: book.id,
+    const books = data.docs?.map((book) => ({
+      id: book.key,
       title: book.title,
-      authors: book.authors?.map((a) => a.name) || [],
-      genres: book.subjects || [],
-      languages: book.languages || [],
-      thumbnail: book.formats?.["image/jpeg"] || null,
-      download: book.formats?.["text/html"] || null,
+      authors: book.author_name || [],
+      genres: book.subject || [],
+      languages: book.language || [],
+      thumbnail: book.cover_i
+        ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
+        : null,
+      year: book.first_publish_year || null,
     }));
     res.json(books || []);
   } catch (err) {
