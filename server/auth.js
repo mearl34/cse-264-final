@@ -1,6 +1,6 @@
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import express from "express";
+import passport from "passport"
+import { Strategy as GoogleStrategy } from "passport-google-oauth20"
+import express from 'express'
 
 const router = express.Router();
 
