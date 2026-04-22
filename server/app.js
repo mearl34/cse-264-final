@@ -1,26 +1,33 @@
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
+import session from "express-session";
+import passport from "passport";
+import authRoutes from "./auth.js";
 
-import {
-  addUser,
-  deleteUser,
-  editUser,
-  searchUsers,
-  createEntry,
-  editEntry,
-  deleteEntry,
-  getEntries
-} from './db/postgres.js'
+import { query, searchUsers,getUser, addUser, editUser, deleteUser ,createEntry , editEntry , deleteEntry } from './db/postgres.js';
 
 // create the app
 const app = express()
 // it's nice to set the port number so it's always the same
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 5000);
 // set up some middleware to handle processing body requests
 app.use(express.json())
 // set up some midlleware to handle cors
-app.use(cors())
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}));
+//allow sessions for auth   
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+//auth routes
+app.use("/auth", authRoutes);
+
 
 // base route
 app.get('/', (req, res) => {
@@ -48,9 +55,9 @@ app.get("/users/search", async (req, res) => {
 //create a user with suplied json
 app.post("/users", async (req, res) => {
   try {
-    const { gmail, gid, username, pfp, pronouns } = req.body
+    const { gmail, gid, username,pronouns } = req.body
 
-    const user = await addUser(gmail, gid, username, pfp, pronouns)
+    const user = await addUser(gmail, gid, username,pronouns)
     res.json(user)
   } catch (err) {
     console.error(err)
@@ -62,9 +69,9 @@ app.post("/users", async (req, res) => {
 app.put("/users/:uid", async (req, res) => {
   try {
     const { uid } = req.params
-    const { gmail, gid, username, pfp, pronouns,is_private } = req.body
+    const { gmail, gid, username,pronouns,is_private } = req.body
 
-    const updated = await editUser(uid, gmail, gid, username, pfp, pronouns,is_private)
+    const updated = await editUser(uid, gmail, gid, username,pronouns,is_private)
     res.json(updated)
   } catch (err) {
     console.error(err)
@@ -85,6 +92,18 @@ app.delete("/users/:uid", async (req, res) => {
   }
 })
 
+
+app.get("/users/:gid", async (req, res) => {
+  try {
+    const { gid } = req.params
+
+    const user = await getUser(gid)
+    res.json(user)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Search failed" })
+  }
+})
 /////////////////////////ListEntry Routes///////////////////////////
 
 //create an entry for a user
@@ -127,11 +146,11 @@ app.put("/entries", async (req, res) => {
   }
 })
 //delete an entry
-app.delete("/entries", async (req, res) => {
+app.delete("/entries/:id", async (req, res) => {
   try {
-    const { uid, book_id } = req.body
+    const {id} = req.params
 
-    const deleted = await deleteEntry(uid, book_id)
+    const deleted = await deleteEntry(id)
     res.json(deleted)
   } catch (err) {
     console.error(err)
@@ -141,7 +160,7 @@ app.delete("/entries", async (req, res) => {
 
 
 
-
+app.use("/auth", authRoutes);
 
 app.listen(app.get('port'), () => {
     console.log('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
