@@ -1,10 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
-
+import session from "express-session";
+import passport from "passport";
+import authRoutes from "./auth.js";
 
 import { query, searchUsers,getUser, addUser, editUser, deleteUser ,createEntry , editEntry , deleteEntry } from './db/postgres.js';
-import authRoutes from "./auth.js";
+
 // create the app
 const app = express()
 // it's nice to set the port number so it's always the same
@@ -12,7 +14,20 @@ app.set('port', process.env.PORT || 5000);
 // set up some middleware to handle processing body requests
 app.use(express.json())
 // set up some midlleware to handle cors
-app.use(cors({origin: "http://localhost:5173",credentials: true}))
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}));
+//allow sessions for auth   
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+//auth routes
+app.use("/auth", authRoutes);
+
 
 // base route
 app.get('/', (req, res) => {
