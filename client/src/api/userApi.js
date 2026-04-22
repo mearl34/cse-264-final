@@ -31,7 +31,8 @@ export const editUser = async (uid, userData) => {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(userData)
+    body: JSON.stringify(userData),
+    credentials: "include",
   })
 
   if (!res.ok) throw new Error("Failed to update user")
@@ -40,9 +41,33 @@ export const editUser = async (uid, userData) => {
 
 export const deleteUser = async (uid) => {
   const res = await fetch(`${API_BASE_URL}/users/${uid}`, {
-    method: "DELETE"
+    method: "DELETE",
+    credentials: "include",
   })
 
   if (!res.ok) throw new Error("Failed to delete user")
   return await res.json()
 }
+
+
+export const getUserByGid = async (gid) => {
+  try {
+    const res = await fetch(`http://localhost:5000/users/${gid}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user:", err);
+    return null;
+  }
+};

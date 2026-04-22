@@ -89,7 +89,7 @@ export default function UserSearch() {
                 sx={{ display: "flex", alignItems: "center", gap: 2 }}
               >
                 <Avatar
-                  src={user.pfp || undefined}
+                  src={user.pfp || undefined} ////////////////////////////////////////////Update to use google pfp
                   sx={{ width: 40, height: 40 }}
                 >
                   {!user.pfp && user.username?.[0]?.toUpperCase()}
