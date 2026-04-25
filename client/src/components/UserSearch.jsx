@@ -32,8 +32,11 @@ export default function UserSearch() {
 
     setLoading(true)
     try {
-      const users = await searchUsers(value)
-      setResults(users)
+      const users = await searchUsers(value);
+
+      //////////////////////////////////////////////////////////////////////Change later to not due this if admin
+      const publicUsers = users.filter(user => user.is_private !== true);
+      setResults(publicUsers)
     } catch (err) {
       console.error(err)
     } finally {

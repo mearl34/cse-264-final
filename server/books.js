@@ -12,7 +12,9 @@ router.get("/search", async (req, res) => {
     );
     const data = await response.json();
     const books = data.docs?.map((book) => ({
-      id: book.key,
+      id: book.key,                 
+      key: book.key,                
+      editionKey: book.cover_edition_key,
       title: book.title,
       authors: book.author_name || [],
       genres: book.subject || [],
