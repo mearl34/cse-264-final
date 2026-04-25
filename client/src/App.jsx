@@ -8,7 +8,7 @@ function App() {
 
   useEffect(() => {
     // checking if the user is already logged in when the app loads
-    fetch('http://localhost:5000/auth/me', { credentials: 'include' })
+    fetch('http://localhost:5000/me', { credentials: 'include' })
       .then(res => res.ok ? res.json() : null)
       .then(data => setUser(data))
       .catch(() => setUser(null))

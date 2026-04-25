@@ -24,7 +24,7 @@ HOW TO USE
 export const addUser = async (gmail, gid, username,pronouns, is_private) => {
   const text = `
     INSERT INTO users (gmail, gid, username, pronouns, is_private)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    VALUES ($1, $2, $3, $4, $5)
     RETURNING uid, gmail, gid, username, pronouns, is_private;
   `
 
@@ -80,7 +80,7 @@ export const editUser = async (uid, gmail, gid, username, pronouns, is_private) 
       gmail = $1,
       gid = $2,
       username = $3,
-      pronouns = $4
+      pronouns = $4,
       is_private = $6
     WHERE uid = $5
     RETURNING *;

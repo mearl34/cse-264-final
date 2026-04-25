@@ -107,6 +107,14 @@ app.get("/users/:gid", async (req, res) => {
     res.status(500).json({ error: "Search failed" })
   }
 })
+
+// moved requesting user session to app.js
+app.get("/me", (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not logged in" });
+  }
+  res.json(req.user);
+});
 /////////////////////////ListEntry Routes///////////////////////////
 
 //create an entry for a user
@@ -161,9 +169,6 @@ app.delete("/entries/:id", async (req, res) => {
   }
 })
 
-
-
-app.use("/auth", authRoutes);
 
 app.listen(app.get('port'), () => {
     console.log('App is running at http://localhost:%d in %s mode', app.get('port'), app.get('env'));
