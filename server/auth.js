@@ -1,7 +1,7 @@
 import passport from "passport"
 import { Strategy as GoogleStrategy } from "passport-google-oauth20"
 import express from 'express'
-import { getUser, addUser } from './db/postgres.js';
+import { getUser, addUser, editUser } from './db/postgres.js';
 
 const router = express.Router();
 
@@ -18,6 +18,8 @@ passport.use(new GoogleStrategy({
       profile.emails?.[0]?.value,
       profile.id,
       profile.displayName,
+      null,
+      profile.photos?.[0]?.value,
       null,
       false
     );
