@@ -6,7 +6,7 @@ import passport from "passport";
 import authRoutes from "./auth.js";
 import bookRoutes from "./books.js";
 
-import { query, searchUsers,getUser, addUser, editUser, deleteUser ,createEntry , editEntry , deleteEntry } from './db/postgres.js';
+import { query, searchUsers,getUser, addUser, editUser, deleteUser ,createEntry , editEntry , deleteEntry, getEntries} from './db/postgres.js';
 
 // create the app
 const app = express()
@@ -98,15 +98,20 @@ app.delete("/users/:uid", async (req, res) => {
 
 app.get("/users/:gid", async (req, res) => {
   try {
-    const { gid } = req.params
+    const { gid } = req.params;
 
-    const user = await getUser(gid)
-    res.json(user)
+    const user = await getUser(gid);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json(user);
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Search failed" })
+    console.error(err);
+    return res.status(500).json({ error: "Search failed" });
   }
-})
+});
 
 // moved requesting user session to app.js
 app.get("/me", (req, res) => {
@@ -130,26 +135,15 @@ app.post("/entries", async (req, res) => {
   }
 })
 
-//get entries by user
-app.get("/entries/:uid", async (req, res) => {
-  try {
-    const { uid } = req.params
 
-    const entries = await getEntries(uid)
-    res.json(entries)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: "Failed to fetch entries" })
-  }
-})
 
 
 //update an entry
 app.put("/entries", async (req, res) => {
   try {
-    const { uid, book_id, status, rating } = req.body
+    const { user_id, book_id, status, rating } = req.body
 
-    const updated = await editEntry(uid, book_id, status, rating)
+    const updated = await editEntry(user_id, book_id, status, rating)
     res.json(updated)
   } catch (err) {
     console.error(err)
@@ -168,6 +162,61 @@ app.delete("/entries/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete entry" })
   }
 })
+
+
+
+//confirm if an entry exists to determine if entry is edited or created
+app.get("/entries/check", async (req, res) => {
+  try {
+    const { user_id, book_id } = req.query;
+
+    if (!user_id || !book_id) {
+      return res.status(400).json({ error: "Missing user_id or book_id" });
+    }
+
+    const text = `
+      SELECT *
+      FROM list_entries
+      WHERE user_id = $1
+      AND book_id = $2
+      LIMIT 1;
+    `;
+
+    const values = [user_id, book_id];
+
+    const result = await query(text, values);
+
+    return res.json({
+      exists: result.rows.length > 0,
+      entry: result.rows[0] || null,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to check entry" });
+  }
+});
+
+
+//get entries by user
+app.get("/entries/:uid", async (req, res) => {
+  try {
+    const { uid } = req.params
+
+    const entries = await getEntries(uid)
+    res.json(entries)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Failed to fetch entries" })
+  }
+})
+
+
+
+
+
+
+
+
 
 
 app.listen(app.get('port'), () => {
