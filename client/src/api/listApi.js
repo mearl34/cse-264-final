@@ -48,3 +48,14 @@ export const deleteEntry = async (id) => {
   if (!res.ok) throw new Error("Failed to delete entry")
   return await res.json()
 }
+
+//check if entry exists or not
+export const checkEntryExists = async (user_id, book_id) => {
+  const res = await fetch(
+    `${API_BASE_URL}/entries/check?user_id=${user_id}&book_id=${book_id}`
+  );
+
+  if (!res.ok) throw new Error("Failed to check entry");
+
+  return await res.json();
+};

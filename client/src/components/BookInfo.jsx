@@ -14,12 +14,16 @@ import {
   InputLabel,
 } from "@mui/material";
 
+
+
+//Popup for when a book is clicked. Displays additional data aswell as allowing user to add book to list
 export default function BookInfo({ book, open, onClose, loading, onAddToList }) {
   if (!book) return null;
 
     //states for dropdowns
     const [rating, setRating] = useState("");
     const [status, setStatus] = useState("");
+   
 
 
 
@@ -29,6 +33,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
       <DialogTitle>{book.title}</DialogTitle>
 
       <DialogContent dividers>
+        {/**load while data is fetched ... fetch was moved to home, so not really needed now, but here for safety */}
         {loading ? (
             <CircularProgress />
             ) : (
@@ -44,7 +49,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
                    
 
 
-                    <Box mt={3} display="flex" gap={2} flexwrap="wrap" >
+                    <Box mt={3} display="flex" gap={2} flexWrap="wrap" >
                         {/* Rating dropdown */}
                         <FormControl size="small" sx={{ minWidth: 120 }}>
                             <InputLabel>Rating</InputLabel>
@@ -80,6 +85,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
                         <Button
                             variant="contained"
                             disabled={!rating || !status}
+                            //call parents passed function
                             onClick={() => {
                                 onAddToList({
                                 book,
@@ -94,12 +100,12 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
                 
                 </Box>
                 </Box>
-                {/**Display the top 5 subjects */}
+                {/**Display the top 5 subjects, can display more, but 5 is nice*/}
                 {book.subjects && book.subjects.length > 0 && (
                      <Box
                         sx={{
                         display: "flex",
-                        flexwrap: "wrap",
+                        flexWrap: "wrap",
                         gap: 1,
                         mt: 2,
                         }}
@@ -115,7 +121,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
                     </Box>
                     )}
 
-
+                {/** display info if available */}
                 <Box>
                     <Typography variant="body1">
                     <strong>Authors:</strong> {book.authors.join(", ")}
