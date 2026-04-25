@@ -60,7 +60,7 @@ app.post("/users", async (req, res) => {
   try {
     const { gmail, gid, username,pronouns } = req.body
 
-    const user = await addUser(gmail, gid, username,pronouns)
+    const user = await addUser(gmail, gid, username, pronouns, pfp, bio)
     res.json(user)
   } catch (err) {
     console.error(err)
@@ -72,9 +72,9 @@ app.post("/users", async (req, res) => {
 app.put("/users/:uid", async (req, res) => {
   try {
     const { uid } = req.params
-    const { gmail, gid, username,pronouns,is_private } = req.body
+    const { gmail, gid, username, pronouns, pfp, bio, is_private } = req.body
 
-    const updated = await editUser(uid, gmail, gid, username,pronouns,is_private)
+    const updated = await editUser(uid, gmail, gid, username, pronouns, pfp, bio, is_private)
     res.json(updated)
   } catch (err) {
     console.error(err)

@@ -21,14 +21,14 @@ HOW TO USE
 */
 
 //Add a new user to the database 
-export const addUser = async (gmail, gid, username,pronouns, is_private) => {
+export const addUser = async (gmail, gid, username,pronouns, pfp, bio, is_private) => {
   const text = `
-    INSERT INTO users (gmail, gid, username, pronouns, is_private)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING uid, gmail, gid, username, pronouns, is_private;
+    INSERT INTO users (gmail, gid, username, pronouns, pfp, bio, is_private)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING uid, gmail, gid, username, pronouns, pfp, bio, is_private;
   `
 
-  const values = [gmail, gid, username, pronouns, is_private]
+  const values = [gmail, gid, username, pronouns, pfp, bio, is_private]
 
   const res = await query(text, values)
   return res.rows[0]
@@ -73,7 +73,7 @@ export const getUser = async (gid) => {
 }
 
 //edit a user, replacing all fields with input data
-export const editUser = async (uid, gmail, gid, username, pronouns, is_private) => {
+export const editUser = async (uid, gmail, gid, username, pronouns, pfp, bio, is_private) => {
   const text = `
     UPDATE users
     SET 
@@ -81,12 +81,14 @@ export const editUser = async (uid, gmail, gid, username, pronouns, is_private) 
       gid = $2,
       username = $3,
       pronouns = $4,
-      is_private = $6
+      pfp = $6,
+      bio = $7,
+      is_private = $8
     WHERE uid = $5
     RETURNING *;
   `
 
-  const values = [gmail, gid, username, pronouns, uid, is_private]
+  const values = [gmail, gid, username, pronouns, uid, pfp, bio, is_private]
 
   const res = await query(text, values)
   return res.rows[0]
