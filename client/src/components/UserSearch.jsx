@@ -3,27 +3,23 @@
 import { useState } from "react"
 import {
   Box,
-  TextField,
-  Card,
-  CardContent,
-  Typography,
   Avatar,
-  Stack,
   CircularProgress,
    List,
   ListItem,
   ListItemButton,
   ListItemAvatar,
   ListItemText,
-  Divider
+  Divider,
+  Button
 } from "@mui/material"
 
-import { searchUsers } from "../api/userApi"
+import { searchUsers, deleteUser} from "../api/userApi"
 import SearchBar from "./BookSearch";
 
 
 
-export default function UserSearch() {
+export default function UserSearch({isAdmin}) {
     //states for search bar
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
@@ -41,9 +37,15 @@ export default function UserSearch() {
   setLoading(true);
   try {
     const users = await searchUsers(value);
-
-    const publicUsers = users.filter(user => user.is_private !== true);
-    setResults(publicUsers);
+    if(isAdmin){
+      setResults(users); // ignore privacy for admins
+    }
+    else{
+      const publicUsers = users.filter(user => user.is_private !== true);
+      setResults(publicUsers);
+    }
+    
+    
   } catch (err) {
     console.error(err);
   } finally {
@@ -51,6 +53,18 @@ export default function UserSearch() {
   }
 };
 
+
+  //allows admin to delete users if nessisary
+  const handleDelete = async (id) => {
+    try {
+      await deleteUser(id);
+
+      // remove from UI instantly
+      setResults((prev) => prev.filter((u) => u.uid !== id));
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+    }
+  };
   return (
     // center box for now
     <Box
@@ -77,7 +91,7 @@ export default function UserSearch() {
             <div key={user.uid}>
               <ListItem disablePadding>
                 <ListItemButton onClick={() => console.log(user)}>
-                  
+
                   <ListItemAvatar>
                     <Avatar
                       src={user.pfp || undefined}
@@ -93,6 +107,16 @@ export default function UserSearch() {
                   />
 
                 </ListItemButton>
+
+                {/* ADMIN DELETE BUTTON */}
+                {isAdmin && (
+                  <Button
+                    color="error"
+                    onClick={() => handleDelete(user.uid)}
+                  >
+                    Delete
+                  </Button>
+                )}
               </ListItem>
 
               <Divider />
