@@ -16,14 +16,17 @@ import {
 
 import { searchUsers, deleteUser} from "../api/userApi"
 import SearchBar from "./BookSearch";
+import UserInfo from "./UserInfo";
 
 
+export default function UserSearch({ user }) {
 
 export default function UserSearch({isAdmin}) {
     //states for search bar
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
 
   const handleSearch = async (value) => {
   setQuery(value);
@@ -90,8 +93,9 @@ export default function UserSearch({isAdmin}) {
           {results.map((user) => (
             <div key={user.uid}>
               <ListItem disablePadding>
-                <ListItemButton onClick={() => console.log(user)}>
-
+                {/* Pass the selected user for profile pop up */}
+                <ListItemButton onClick={() => setSelectedUser(user)}>
+                  
                   <ListItemAvatar>
                     <Avatar
                       src={user.pfp || undefined}
@@ -135,8 +139,14 @@ export default function UserSearch({isAdmin}) {
             </ListItem>
           )}
         </List>
-
       </Box>
+      { /* adding the pop up with the other user's profiles */ }
+      <UserInfo
+        user={selectedUser}
+        open={!!selectedUser}
+        onClose={() => setSelectedUser(null)}
+        currentUserUid={user?.uid}
+      />
     </Box>
   )
 }

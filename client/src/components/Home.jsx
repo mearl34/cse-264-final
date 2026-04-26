@@ -253,6 +253,8 @@ function Home({ user }) {
           />
         </>
     ) : (
+      // pass current user object
+      <UserSearch user = {user}/>
       <UserSearch isAdmin = {isAdmin}/>
     )}
     </div>
