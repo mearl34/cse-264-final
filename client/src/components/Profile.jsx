@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { getUserByGid } from "../api/userApi";
 import { getEntries } from "../api/listApi";
+import BookInfo from "./BookInfo";
+import { createEntry, editEntry, checkEntryExists } from "../api/listApi";
 
 export default function Profile({uid, onLogout}) {
   const [user, setUser] = useState(null);
@@ -10,6 +12,8 @@ export default function Profile({uid, onLogout}) {
   const [bio, setBio] = useState("");
   const [entries, setEntries] = useState([]);
   const [books, setBooks] = useState({});
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [loadingBook, setLoadingBook] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -48,6 +52,24 @@ export default function Profile({uid, onLogout}) {
     loadEntries();
   }, [user]);
 
+  // by readding to list you can update rating and/or status
+  const handleAddToList = async ({ book, rating, status }) => {
+    try {
+      const book_id = book.key;
+      const check = await checkEntryExists(user.uid, book_id);
+      console.log("check:", check);
+      const entry = { user_id: user.uid, book_id, status, rating };
+
+      if (check.exists) {
+        await editEntry(entry);
+      } else {
+        await createEntry(entry);
+      }
+    } catch (err) {
+      console.error("Failed to add/update entry:", err);
+    }
+  };
+
 
   // ensures that it waits until after the user is loaded before rendering
   if (!user) return <p>Loading...</p>;
@@ -69,6 +91,29 @@ export default function Profile({uid, onLogout}) {
     });
     setUser({ ...user, pronouns, bio });
     setEditing(false);
+  };
+
+  // allow for the book pop up coming from the profile page
+  const handleBookClick = async (entry, book) => {
+    setLoadingBook(true);
+    try {
+      const res = await fetch(`https://openlibrary.org${entry.book_id}.json`);
+      const data = await res.json();
+      setSelectedBook({
+        ...book,
+        key: entry.book_id,
+        description: typeof data.description === "string"
+          ? data.description
+          : data.description?.value || "No description available",
+        subjects: data.subjects || [],
+        authors: book.authors || [],
+        first_publish_year: data.first_publish_date || null,
+      });
+    } catch {
+      setSelectedBook({ ...book, key: entry.book_id, authors: [], subjects: [] });
+    } finally {
+      setLoadingBook(false);
+    }
   };
 
   return (
@@ -98,7 +143,12 @@ export default function Profile({uid, onLogout}) {
           {entries.map(entry => {
             const book = books[entry.book_id];
             return (
-              <div key={entry.id} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              // submitting the book to the list on the button click
+              <div
+                key={entry.id}
+                onClick={() => handleBookClick(entry, book)}
+                style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, cursor: "pointer" }}
+              >
                 {book?.thumbnail ? (
                   <img src={book.thumbnail} alt={book.title} style={{ width: 48, height: 64, objectFit: "cover" }} />
                 ) : (
@@ -140,6 +190,14 @@ export default function Profile({uid, onLogout}) {
           <button onClick={() => setEditing(false)} style={{ marginLeft: 8 }}>Cancel</button>
         </div>
       )}
+
+      <BookInfo
+        book={selectedBook}
+        open={!!selectedBook || loadingBook}
+        loading={loadingBook}
+        onClose={() => setSelectedBook(null)}
+        onAddToList={handleAddToList} 
+      />
     </div>
   );
 }

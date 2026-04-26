@@ -237,7 +237,8 @@ function Home({ user }) {
           />
         </>
     ) : (
-      <UserSearch />
+      // pass current user object
+      <UserSearch user = {user}/>
     )}
     </div>
   )
