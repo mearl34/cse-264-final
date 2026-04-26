@@ -4,7 +4,7 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, text }) {
   const [query, setQuery] = useState('');
 
   const handleSearch = () => {
@@ -19,7 +19,7 @@ function SearchBar({ onSearch }) {
     >
       <InputBase
         sx={{ ml: 1, flex: 1 }}
-        placeholder="Search"
+        placeholder={text}
         inputProps={{ 'aria-label': 'Search' }}
         value={query}
         onChange={(e) => setQuery(e.target.value)}

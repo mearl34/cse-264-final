@@ -40,9 +40,24 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
             <>
                 <Box display="flex" gap={2}>
                     <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                     {book.thumbnail && (
-                        <img src={book.thumbnail} alt={book.title} width={100} />
-                    )}
+                     {book.thumbnail ? (
+                  <img src={book.thumbnail} alt={book.title} width={100} />
+                ) : (
+                  <Box
+                    sx={{
+                      width: 100,
+                      height: 150,
+                      bgcolor: "grey.300",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 1,
+                      color: "black"
+                    }}
+                  >
+                    <Typography variant="caption">No Cover</Typography>
+                  </Box>
+                )}
                 <Box sx={{display: 'flex', flexDirection: 'column'}}>
 
                 
