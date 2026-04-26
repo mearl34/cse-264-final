@@ -19,9 +19,7 @@ import SearchBar from "./BookSearch";
 import UserInfo from "./UserInfo";
 
 
-export default function UserSearch({ user }) {
-
-export default function UserSearch({isAdmin}) {
+export default function UserSearch({ user, isAdmin }) {
     //states for search bar
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
