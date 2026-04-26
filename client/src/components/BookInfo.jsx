@@ -99,7 +99,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
                             label="Status"
                             onChange={(e) => setStatus(e.target.value)}
                             >
-                            <MenuItem value="want_to_read">Want to read</MenuItem>
+                            <MenuItem value="want to read">Want to read</MenuItem>
                             <MenuItem value="reading">Reading</MenuItem>
                             <MenuItem value="completed">Completed</MenuItem>
                             <MenuItem value="dropped">Dropped</MenuItem>
