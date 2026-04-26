@@ -1,12 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BookSearch from '../components/BookSearch';
 import BookInfo from './BookInfo';
+import { createEntry, editEntry, checkEntryExists } from '../api/listApi';
+
 function Home({ user }) {
   const [books, setBooks] = useState([]);
   //state for book popup dialog
   const [selectedBook, setSelectedBook] = useState(null);
   const [loadingBook, setLoadingBook] = useState(false);
 
+
+  console.log(user);
   const handleSearch = async (query) => {
     const res = await fetch(`http://localhost:5000/books/search?q=${encodeURIComponent(query)}`);
     const data = await res.json();
@@ -49,6 +53,34 @@ function Home({ user }) {
   };
 
 
+  //helper function for book info
+ const handleAddToList = async ({ book, rating, status }) => {
+  try {
+    const user_id = user.uid;
+    const book_id = book.key;
+
+    //check if entry exists
+    const check = await checkEntryExists(user_id, book_id);
+
+    const entry = {
+      user_id,
+      book_id,
+      status,
+      rating,
+    };
+    //if it exists update
+    if (check.exists) {
+      const updated = await editEntry(entry);
+      console.log("Entry updated:", updated);
+    } else {
+       //if not add it
+      const created = await createEntry(entry);
+      console.log("Entry created:", created);
+    }
+  } catch (err) {
+    console.error("Failed to add/update entry:", err);
+  }
+};
 
   return (
     <div>
@@ -74,7 +106,7 @@ function Home({ user }) {
         open={!!selectedBook || loadingBook}
         loading={loadingBook}
         onClose={() => setSelectedBook(null)}
-        onAddToList={console.log("hi")}
+        onAddToList={handleAddToList}
       />
     </div>
   )
