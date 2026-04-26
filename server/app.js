@@ -6,7 +6,7 @@ import passport from "passport";
 import authRoutes from "./auth.js";
 import bookRoutes from "./books.js";
 
-import { query, searchUsers,getUser, addUser, editUser, deleteUser ,createEntry , editEntry , deleteEntry } from './db/postgres.js';
+import { query, searchUsers, getUser, addUser, editUser, deleteUser, createEntry, editEntry, deleteEntry, getEntries } from './db/postgres.js';
 
 // create the app
 const app = express()
