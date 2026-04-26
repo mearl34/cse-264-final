@@ -27,6 +27,22 @@ function Home({ user }) {
   //loading for search
   const [loadingBooks, setLoadingBooks] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  //State for if user is admin
+  const [isAdmin,setIsAdmin] = useState(false);
+
+
+  //if user is an admin, set state at app start to render new actions
+  useEffect(() => {
+      if (user?.role === "admin") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    }, []);
+
+
+
   useEffect(() => {
   if (searchType !== "books") {
     setBooks([]);
@@ -237,7 +253,7 @@ function Home({ user }) {
           />
         </>
     ) : (
-      <UserSearch />
+      <UserSearch isAdmin = {isAdmin}/>
     )}
     </div>
   )

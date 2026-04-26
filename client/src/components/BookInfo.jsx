@@ -21,7 +21,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
   if (!book) return null;
 
     //states for dropdowns
-    const [rating, setRating] = useState("");
+    const [rating, setRating] = useState(null);
     const [status, setStatus] = useState("");
    
 
@@ -66,20 +66,30 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
 
                     <Box mt={3} display="flex" gap={2} flexWrap="wrap" >
                         {/* Rating dropdown */}
-                        <FormControl size="small" sx={{ minWidth: 120 }}>
+                       <FormControl size="small" sx={{ minWidth: 120 }}>
                             <InputLabel>Rating</InputLabel>
+
                             <Select
-                            value={rating}
-                            label="Rating"
-                            onChange={(e) => setRating(e.target.value)}
+                                value={rating ?? ""}   // IMPORTANT: use "" for unselected
+                                label="Rating"
+                                onChange={(e) => {
+                                const val = e.target.value;
+                                setRating(val === "" ? null : val);
+                                }}
                             >
-                            {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                                <MenuItem key={num} value={num}>
-                                {num}
+                                {/* EMPTY OPTION */}
+                                <MenuItem value="">
+                                <em>None</em>
                                 </MenuItem>
-                            ))}
+
+                                {/* 1–10 */}
+                                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                                <MenuItem key={num} value={num}>
+                                    {num}
+                                </MenuItem>
+                                ))}
                             </Select>
-                        </FormControl>
+                            </FormControl>
 
                         {/* Status dropdown */}
                         <FormControl size="small" sx={{ minWidth: 160 }}>
@@ -99,7 +109,7 @@ export default function BookInfo({ book, open, onClose, loading, onAddToList }) 
 
                         <Button
                             variant="contained"
-                            disabled={!rating || !status}
+                            disabled={!status}
                             //call parents passed function
                             onClick={() => {
                                 onAddToList({
