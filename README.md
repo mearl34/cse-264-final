@@ -1,7 +1,7 @@
 # CSE-264 Final Project - Bookworm
 ## Team Members: 
-Both members took on front-end and back-end developent, but particular roles taken were:
-Anthony Cutrona - Database development and Backend API creation
+Both members took on front-end and back-end developent, but particular roles taken were: \
+Anthony Cutrona - Database development and Backend API creation \
 Maisy Earl - External API support and Authentication
 
 ## Project Description
@@ -21,3 +21,46 @@ Bookworm is a platform where users can create thier own digital reading lists as
 - Internal REST API: An internal REST API was created to safely communicate between our front-end and back-end, allowing the retreval of database values in the front-end, as well as storage of input data to the backend (and then database). Console logging was utilized in many aspects of the project to confirm API functionallity during development. API calls in the frontend are primaril done through the functions found in the API folder, with the backend's respective routes in app.js.
 
 - External REST API: Our project primarily revolves around the use of the [Open Library API](https://openlibrary.org/developers/api), (changed from originally proposed GutenDex API, as it posed significant limitaitions) which provides an extensive library of books, able to be searched for, and provided in json. This API provides all of the book descriptions, covers, authors, and tags found in the app, aswell as ids for books, which are utilized in the database as the book_id attribute.
+
+
+
+## Internal Rest API
+
+
+/////////////Detailed API will be provided
+
+
+## Installation & Setup Instructions
+
+After cloning repository, do the following:
+*utilize two terminals to run both client and server*
+
+1. ensure modules are installed
+```
+//in first terminal
+  cd server
+  npm install
+```
+
+```
+//in second terminal
+  cd client
+  npm install
+```
+2. Set environmental variables/update server .env
+
+```
+  //.env with required credentials was provided in email, place in the below directory
+  //server/.env
+```
+
+3. Execute server and client
+```
+//in first terminal, within server folder
+  npm run dev
+```
+
+```
+//in second terminal, within client folder
+  npm run dev
+```
