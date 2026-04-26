@@ -9,10 +9,19 @@ import {
   Typography,
   Avatar,
   Stack,
-  CircularProgress
+  CircularProgress,
+   List,
+  ListItem,
+  ListItemButton,
+  ListItemAvatar,
+  ListItemText,
+  Divider
 } from "@mui/material"
 
 import { searchUsers } from "../api/userApi"
+import SearchBar from "./BookSearch";
+
+
 
 export default function UserSearch() {
     //states for search bar
@@ -21,61 +30,39 @@ export default function UserSearch() {
   const [loading, setLoading] = useState(false)
 
   const handleSearch = async (value) => {
-    setQuery(value)
+  setQuery(value);
 
-    //trim input to be safe
-    if (value.trim() === "") {
-        setResults([])
-        setLoading(false)
-        return
-    }
-
-    setLoading(true)
-    try {
-      const users = await searchUsers(value);
-
-      //////////////////////////////////////////////////////////////////////Change later to not due this if admin
-      const publicUsers = users.filter(user => user.is_private !== true);
-      setResults(publicUsers)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+  if (value.trim() === "") {
+    setResults([]);
+    setLoading(false);
+    return;
   }
+
+  setLoading(true);
+  try {
+    const users = await searchUsers(value);
+
+    const publicUsers = users.filter(user => user.is_private !== true);
+    setResults(publicUsers);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     // center box for now
     <Box
-      sx={{
-        minHeight: "100vh",
-        width: "100vw",
-        display: "flex",
-        justifyContent: "center", 
-        alignItems: "center",
-        
-      }}
     >
       
       {/* surrounding box for the search */}
       <Box
-        sx={{
-          width: "100%",
-          maxWidth: 700,
-          backgroundColor: "white",
-          borderRadius: 3,
-          boxShadow: 3,
-          p: 4
-        }}
+      
       >
         
         {/* Main search box for users*/}
-        <TextField
-          fullWidth
-          label="Search users"
-          value={query}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
+        <SearchBar onSearch={handleSearch} text="Search Users" />
 
         {/* When Loading */}
         {loading && (
@@ -85,33 +72,46 @@ export default function UserSearch() {
         )}
 
         {/* Results list*/}
-        <Stack spacing={2} mt={3}>
+        <List sx={{ mt: 3 }}>
           {results.map((user) => (
-            <Card key={user.uid} variant="outlined">
-              <CardContent
-                sx={{ display: "flex", alignItems: "center", gap: 2 }}
-              >
-                <Avatar
-                  src={user.pfp || undefined} ////////////////////////////////////////////Update to use google pfp
-                  sx={{ width: 40, height: 40 }}
-                >
-                  {!user.pfp && user.username?.[0]?.toUpperCase()}
-                </Avatar>
+            <div key={user.uid}>
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => console.log(user)}>
+                  
+                  <ListItemAvatar>
+                    <Avatar
+                      src={user.pfp || undefined}
+                      sx={{ width: 40, height: 40 }}
+                    >
+                      {!user.pfp && user.username?.[0]?.toUpperCase()}
+                    </Avatar>
+                  </ListItemAvatar>
 
-                <Typography fontWeight={600}>
-                  {user.username}
-                </Typography>
-              </CardContent>
-            </Card>
+                  <ListItemText
+                    primary={user.username}
+                    secondary={user.gmail}
+                  />
+
+                </ListItemButton>
+              </ListItem>
+
+              <Divider />
+            </div>
           ))}
-        </Stack>
 
-        {/* If no users found */}
-        {!loading && query && results.length === 0 && (
-          <Typography sx={{ mt: 2, textAlign: "center", color: "gray" }}>
-            No users found
-          </Typography>
-        )}
+          {!loading && query && results.length === 0 && (
+            <ListItem>
+              <ListItemText
+                primary="No users found"
+                primaryTypographyProps={{
+                  color: "text.secondary",
+                  textAlign: "center",
+                }}
+              />
+            </ListItem>
+          )}
+        </List>
+
       </Box>
     </Box>
   )
