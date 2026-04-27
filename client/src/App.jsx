@@ -2,6 +2,8 @@ import {useState, useEffect} from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import Home from './components/Home'
 import Profile from './components/Profile'
+import './App.css'
+import { motion } from 'framer-motion'
 
 function App() {
   const [apiStatus, setAPIStatus] = useState()
@@ -40,8 +42,14 @@ function App() {
           </>
         ) : (
           <div>
-            <h1>Bookworm📖🪱</h1>
-            <button onClick={handleLogin}>Sign in with Google</button>
+            <motion.img
+              src="/assets/Login.png"
+              alt="Sign in with Google"
+              onClick={handleLogin}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ cursor: 'pointer', width: '70%', display: 'block', margin: '0 auto' }}
+            />
           </div>
         )}
       </div>
