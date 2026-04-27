@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Typography from "@mui/material/Typography";
+import {Typography, FormControl, Select, InputLabel, MenuItem, Avatar} from "@mui/material";
 import { getUserByGid } from "../api/userApi";
 import { getEntries } from "../api/listApi";
 import BookInfo from "./BookInfo";
@@ -10,6 +10,7 @@ export default function Profile({uid, onLogout}) {
   const [editing, setEditing] = useState(false);
   const [pronouns, setPronouns] = useState("");
   const [bio, setBio] = useState("");
+  const [isPrivate, setIsPrivate] = useState("");
   const [entries, setEntries] = useState([]);
   const [books, setBooks] = useState({});
   const [selectedBook, setSelectedBook] = useState(null);
@@ -86,7 +87,7 @@ export default function Profile({uid, onLogout}) {
         pronouns,
         bio,
         pfp: user.pfp,
-        is_private: user.is_private,
+        is_private: isPrivate,
       }),
     });
     setUser({ ...user, pronouns, bio });
@@ -118,12 +119,13 @@ export default function Profile({uid, onLogout}) {
 
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: 24 }}>
-      <img
-        src={user.pfp}
-        alt={user.username}
+      <Avatar
+        src={user.pfp || undefined}
+        sx={{ width: 96, height: 96 }}
         onError={e => e.target.src = "https://www.gravatar.com/avatar/?d=mp"}
-        style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover" }}
-      />
+        >
+        {!user.pfp && user.username?.[0]?.toUpperCase()}
+        </Avatar>
 
       <Typography variant="h5" style={{ marginTop: 12 }}>{user.username}</Typography>
       <Typography variant="body2" color="text.secondary">{user.gmail}</Typography>
@@ -158,7 +160,7 @@ export default function Profile({uid, onLogout}) {
                   <Typography variant="body1">{book?.title || entry.book_id}</Typography>
                   <Typography variant="body2" color="text.secondary">Status: {entry.status}</Typography>
                   {entry.rating && (
-                    <Typography variant="body2" color="text.secondary">Rating: {entry.rating}/5</Typography>
+                    <Typography variant="body2" color="text.secondary">Rating: {entry.rating}/10</Typography>
                   )}
                 </div>
               </div>
@@ -175,7 +177,7 @@ export default function Profile({uid, onLogout}) {
       </button>
 
             
-      { /* while editing you can update the prounouns and bio with a text box */ }
+      { /* while editing you can update the prounouns and bio with a text box , aswell as change privacy*/ }
       {editing && (
         <div style={{ marginTop: 16 }}>
           <div>
@@ -185,6 +187,24 @@ export default function Profile({uid, onLogout}) {
           <div style={{ marginTop: 8 }}>
             <label>Bio</label>
             <textarea value={bio} onChange={e => setBio(e.target.value)} placeholder="Write a short bio..." rows={3} />
+          </div>
+
+          <div>
+           <FormControl size="small">
+              <InputLabel>Privacy</InputLabel>
+
+              <Select
+                value={isPrivate ? "true" : "false"}
+                label="Privacy"
+                onChange={(e) =>
+                  //get boolean value rather than text
+                  setIsPrivate(e.target.value === "true")
+                }
+              >
+                <MenuItem value="true">Private</MenuItem>
+                <MenuItem value="false">Public</MenuItem>
+              </Select>
+            </FormControl>
           </div>
           <button onClick={handleSave} style={{ marginTop: 8 }}>Save</button>
           <button onClick={() => setEditing(false)} style={{ marginLeft: 8 }}>Cancel</button>
