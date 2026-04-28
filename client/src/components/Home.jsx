@@ -14,6 +14,7 @@ import { ToggleButton,
   ListItemText,
   Avatar,
   Divider,
+  Paper,
   CircularProgress } from "@mui/material";
 
 function Home({ user }) {
@@ -145,27 +146,93 @@ function Home({ user }) {
 };
 
   return (
-    <div>
-      <h1>Welcome to bookworm yay!</h1>
-
-
-      {/**toggle to switch between search bars */}
-      <ToggleButtonGroup
-        value={searchType}
-        exclusive
-        onChange={(e, newValue) => {
-          if (newValue !== null) setSearchType(newValue);
-        }}
-        sx={{ mb: 2 }}
+    <Box
+  sx={{
+    minHeight: "100vh",
+    minWidth: "100vw",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    
+    pt: 8, // pushes content down from top a bit
+  }}
+>
+  <Paper
+    elevation={3}
+    sx={{
+      width: "90%",
+      p: 0,
+      borderRadius: 3,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: "center",
+      overflow: "hidden",
+      mb: 20,
+      backgroundColor: "#d9bbad",
+      minHeight: 350
+    }}
+  >
+    <Box
+      sx={{
+        backgroundImage: "url('/assets/flowers.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center -50px",
+        width: "100%",
+        py: 2,
+        mx: 0,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+      }}
+    >
+    <Typography
+      variant="h4"
+      sx={{
+        textAlign: "center",
+        fontWeight: 600,
+        color: "white",
+        
+        fontFamily: "Instrument Serif"
+      }}
+    >
+      Welcome to Bookworm!
+    </Typography>
+    <Typography
+      sx={{
+        textAlign: "center",
+        fontWeight: 300,
+        color: "white",
+        
+        fontFamily: "Instrument Serif"
+      }}>
+      
+      Search for a book or user to expand your reading list.
+    </Typography>
+    
+    </Box>
+      <Box
+        sx={{display: "flex", alignItems: "center", justifyContent: "center",gap: 2,}}
       >
-        <ToggleButton value="books">Books</ToggleButton>
-        <ToggleButton value="users">Users</ToggleButton>
-    </ToggleButtonGroup>
+        <img src="/assets/ladybug.png" alt="ladybug" style={{transform: "scaleX(-1)", height: "50px"}}/>
+      
+        {/**toggle to switch between search bars */}
+        <ToggleButtonGroup
+          value={searchType}
+          exclusive
+          onChange={(e, newValue) => {
+            if (newValue !== null) setSearchType(newValue);
+          }}
+          sx={{ mb: 2,mt: 2, backgroundColor: '#8bad92'}}
+        >
+          <ToggleButton sx={{fontFamily: "Instrument Serif",fontWeight: 600,}} value="books">Books</ToggleButton>
+          <ToggleButton sx={{fontFamily: "Instrument Serif",fontWeight: 600,}} value="users">Users</ToggleButton>
+        </ToggleButtonGroup>
+           <img src="/assets/ladybug.png" alt="ladybug"   style={{ height: "50px",}}/>
+      </Box>
       {searchType === "books" ? (
     <>
       <BookSearch onSearch={handleSearch} text="Search Books" />
 
-          <List sx={{ mt: 2 }}>
+          <List sx={{ mt: 3, mb: 5, width: "100%" }}>
             
             {/* Loading state */}
             {loadingBooks && (
@@ -178,10 +245,21 @@ function Home({ user }) {
 
             {/* Book results */}
             {!loadingBooks &&
+              Array.isArray(books) &&
               books.map((book) => (
                 <div key={book.id}>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => handleBookClick(book)}>
+                    <ListItemButton
+                      onClick={() => handleBookClick(book)}
+                      sx={{
+                        borderRadius: 1,
+                        "&:hover": {
+                          backgroundColor: "action.hover",
+                        },
+                        alignItems: "flex-start",
+                        minWidth: 0,
+                      }}
+                    >
 
                       {/* Cover */}
                       <ListItemAvatar>
@@ -212,9 +290,22 @@ function Home({ user }) {
 
                       {/* Text */}
                       <ListItemText
+                        sx={{
+                          minWidth: 0,
+                          ml: 3,
+                          "& .MuiListItemText-primary": {
+                            fontSize: "24px",
+                            fontFamily: "Instrument Serif",
+                            fontWeight: 550,
+                          },
+                          "& .MuiListItemText-secondary": {
+                            fontSize: "0.9rem",
+                            fontFamily: "Instrument Serif",
+                          },
+                        }}
                         primary={book.title}
                         secondary={book.authors?.join(", ") || "Unknown author"}
-                        primaryTypographyProps={{ fontWeight: 600 }}
+
                       />
 
                     </ListItemButton>
@@ -225,7 +316,7 @@ function Home({ user }) {
               ))}
 
             {/* Empty state */}
-            {!loadingBooks && hasSearched && books.length === 0 && (
+            {!loadingBooks && hasSearched && (!books || books.length === 0) && (
               <ListItem>
                 <ListItemText
                   primary="No books found"
@@ -243,7 +334,7 @@ function Home({ user }) {
             )}
 
           </List>
-
+          
           <BookInfo
             book={selectedBook}
             open={!!selectedBook || loadingBook}
@@ -251,12 +342,33 @@ function Home({ user }) {
             onClose={() => setSelectedBook(null)}
             onAddToList={handleAddToList}
           />
+
+          {hasSearched && books.length > 0 && (
+            <Box
+              sx={{
+                mt: 3,
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <img
+                src="/assets/endWorm.png"
+                alt="Search successful"
+                style={{
+                  width: "100%",
+                  maxWidth: 300,
+                  borderRadius: 12,
+                }}
+              />
+            </Box>
+          )}
         </>
     ) : (
       // pass current user object
       <UserSearch user={user} isAdmin={isAdmin} />
     )}
-    </div>
+    </Paper>
+    </Box>
   )
 }
 
