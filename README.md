@@ -26,8 +26,12 @@ Bookworm is a platform where users can create thier own digital reading lists as
 
 ## Internal Rest API
 
+An Internal REST API was created using express.js with the following groups:
 
-/////////////Detailed API will be provided
+- /users - Handles all existant users in the database, includes editing, creation, deletetion, and user search
+- /entries - Handles all entries in database, including creating, editing, and deleting entries, as well as fetching all entries for a user (thier list)
+- /search - Handles the major book search call to the external API
+- /google - Handles all Oauth and google account API calls
 
 
 ## Installation & Setup Instructions

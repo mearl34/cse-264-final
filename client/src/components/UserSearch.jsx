@@ -67,17 +67,16 @@ export default function UserSearch({ user, isAdmin }) {
     }
   };
   return (
-    // center box for now
-    <Box
-    >
+    
+    <Box sx={{ width: "100%"}}>
       
       {/* surrounding box for the search */}
-      <Box
-      
-      >
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexDirection: 'column' }}>
         
         {/* Main search box for users*/}
-        <SearchBar onSearch={handleSearch} text="Search Users" />
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <SearchBar onSearch={handleSearch} text="Search Users" />
+        </Box>
 
         {/* When Loading */}
         {loading && (
@@ -87,7 +86,7 @@ export default function UserSearch({ user, isAdmin }) {
         )}
 
         {/* Results list*/}
-        <List sx={{ mt: 3 }}>
+        <List sx={{ mt: 3, mb: 5, width: "100%" }}>
           {results.map((user) => (
             <div key={user.uid}>
               <ListItem disablePadding>
@@ -97,13 +96,26 @@ export default function UserSearch({ user, isAdmin }) {
                   <ListItemAvatar>
                     <Avatar
                       src={user.pfp || undefined}
-                      sx={{ width: 40, height: 40 }}
+                      sx={{ width: 60, height: 60 }}
                     >
                       {!user.pfp && user.username?.[0]?.toUpperCase()}
                     </Avatar>
                   </ListItemAvatar>
 
                   <ListItemText
+                    sx={{
+                      
+                          ml: 3,
+                          "& .MuiListItemText-primary": {
+                            fontSize: "24px",
+                            fontFamily: "Instrument Serif",
+                            fontWeight: 550,
+                          },
+                          "& .MuiListItemText-secondary": {
+                            fontSize: "0.9rem",
+                            fontFamily: "Instrument Serif",
+                          },
+                        }}
                     primary={user.username}
                     secondary={user.gmail}
                   />
@@ -115,6 +127,8 @@ export default function UserSearch({ user, isAdmin }) {
                   <Button
                     color="error"
                     onClick={() => handleDelete(user.uid)}
+                    
+                    sx={{mr: 3, backgroundColor: "#b63d3d", color: "#f4cccc", fontFamily: "Instrument Serif"}}
                   >
                     Delete
                   </Button>

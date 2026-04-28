@@ -1,9 +1,10 @@
 import {useState, useEffect} from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import Home from './components/Home'
 import Profile from './components/Profile'
 import './App.css'
 import { motion } from 'framer-motion'
+import { Typography, Box } from '@mui/material'
 
 function App() {
   const [apiStatus, setAPIStatus] = useState()
@@ -26,9 +27,42 @@ function App() {
       <div>
         {user ? (
           <>
-            <nav style={{ padding: 16, borderBottom: '1px solid #ccc', display: 'flex', gap: 16 }}>
-              <Link to="/">Home</Link>
-              <Link to="/profile">Profile</Link>
+            <Box sx={{ display: 'flex', backgroundColor: "#43797B", marginTop: "0px", height: "120px", flexDirection: "row", alignItems: "center", justifyContent: "top" }}>
+              <Typography sx={{ fontFamily: "Instrument Serif", fontSize: '96px', fontWeight: "300", letterSpacing: '5%', color: "#E2FEFF"}}>
+                Bookworm
+              </Typography>
+            </Box>
+            <nav
+              style={{
+                padding: 16,
+                display: "flex",
+                gap: 16,
+                backgroundColor: "#3e6a6b",
+              }}
+            >
+              <NavLink
+                to="/"
+                style={({ isActive }) => ({
+                  color: "#E2FEFF",
+                  textDecoration: "none",
+                  fontWeight: isActive ? "700" : "400",
+                  borderBottom: isActive ? "2px solid #E2FEFF" : "none",
+                })}
+              >
+                Home
+              </NavLink>
+
+              <NavLink
+                to="/profile"
+                style={({ isActive }) => ({
+                  color: "#E2FEFF",
+                  textDecoration: "none",
+                  fontWeight: isActive ? "700" : "400",
+                  borderBottom: isActive ? "2px solid #E2FEFF" : "none",
+                })}
+              >
+                Profile
+              </NavLink>
             </nav>
             <Routes>
               <Route path="/" element={<Home user={user} />} />
