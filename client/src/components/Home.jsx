@@ -168,7 +168,7 @@ function Home({ user }) {
       alignItems: "center",
       overflow: "hidden",
       mb: 20,
-      backgroundColor: "#d9bbad",
+      backgroundColor: "#E2FEFF",
       minHeight: 350
     }}
   >
@@ -258,6 +258,7 @@ function Home({ user }) {
                         },
                         alignItems: "flex-start",
                         minWidth: 0,
+                         width: "100%"
                       }}
                     >
 
@@ -293,14 +294,24 @@ function Home({ user }) {
                         sx={{
                           minWidth: 0,
                           ml: 3,
+                          color: "#243a2b",
+
+                          //adjust main and secondary text, bottom 3 prevent overflow
                           "& .MuiListItemText-primary": {
                             fontSize: "24px",
                             fontFamily: "Instrument Serif",
                             fontWeight: 550,
+                            whiteSpace: "normal",
+                            wordBreak: "break-word",
+                            overflowWrap: "break-word",
                           },
+
                           "& .MuiListItemText-secondary": {
                             fontSize: "0.9rem",
                             fontFamily: "Instrument Serif",
+                            whiteSpace: "normal",
+                            wordBreak: "break-word",
+                            overflowWrap: "break-word",
                           },
                         }}
                         primary={book.title}
@@ -342,8 +353,10 @@ function Home({ user }) {
             onClose={() => setSelectedBook(null)}
             onAddToList={handleAddToList}
           />
+          
 
-          {hasSearched && books.length > 0 && (
+          {/**render little worm guy */}
+          {!loadingBooks && hasSearched && books.length > 0 && (
             <Box
               sx={{
                 mt: 3,
