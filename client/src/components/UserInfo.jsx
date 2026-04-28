@@ -46,6 +46,10 @@ export default function UserInfo({ user, open, onClose, currentUserUid }) {
     loadEntries();
   }, [user]);
 
+
+
+  //When fetching book in this way, authors are stored differently when when accesed with our backend call, 
+  //this means authors cannot be obtained without extra calls, which wont be done to save on API use (faster access)
   const handleBookClick = async (entry, book) => {
     setLoadingBook(true);
     try {
@@ -58,7 +62,7 @@ export default function UserInfo({ user, open, onClose, currentUserUid }) {
           ? data.description
           : data.description?.value || "No description available",
         subjects: data.subjects || [],
-        authors: book.authors || [],
+        authors: book.authors || ["api Issue prevents authors here"],
         first_publish_year: data.first_publish_date || null,
       });
     } catch {
@@ -85,58 +89,127 @@ export default function UserInfo({ user, open, onClose, currentUserUid }) {
 
   return (
     <>
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogContent>
+        <Dialog
+          open={open}
+          onClose={onClose}
+          maxWidth="sm"
+          fullWidth
+          slotProps={{
+            paper: {
+              sx: {
+                borderRadius: "32px !important",
+                overflow: "hidden",
+                backgroundColor: "#E2FEFF",
+              },
+            },
+          }}
+        > {/**dialog is actually paper, so needs to be passed */}
+        <DialogContent sx={{p:0, backgroundColor: "#E2FEFF",borderRadius: 8}}>
             <IconButton onClick={onClose} sx={{ position: "absolute", top: 8, right: 8 }}>
             <CloseIcon />
             </IconButton>
 
             {user && (
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", pt: 2 }}>
-                <Avatar
-                src={user.pfp || undefined}
-                sx={{ width: 96, height: 96 }}
-                onError={e => e.target.src = "https://www.gravatar.com/avatar/?d=mp"}
-                >
-                {!user.pfp && user.username?.[0]?.toUpperCase()}
-                </Avatar>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: 0 ,maxWidth: "100%", overflowX: "hidden" }}>
+              <Box sx={{ width: "100%",display: "flex", flexDirection: "column", alignItems: "center", m: "0px", pt: 2, pb: 2, backgroundImage: "url('/assets/flowers.jpg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center -50px",
+                    width: "100%",}}>
+                  <Avatar
+                  src={user.pfp || undefined}
+                  sx={{ width: 96, height: 96 }}
+                  onError={e => e.target.src = "https://www.gravatar.com/avatar/?d=mp"}
+                  >
+                  {!user.pfp && user.username?.[0]?.toUpperCase()}
+                  </Avatar>
+                  <Box sx ={{backgroundColor: "#e6fde4", color: "#243a2b", width: "70%", display: "flex", flexDirection: "column", alignItems: "center", borderRadius: 8, mt: 2, p:1}}>
+                    <Typography sx={{fontFamily: "Instrument Serif"}} variant="h5" >{user.username}</Typography>
+                    <Typography sx={{fontFamily: "Instrument Serif"}} variant="body2" color="text.secondary">{user.gmail}</Typography>
 
-                <Typography variant="h5" sx={{ mt: 2 }}>{user.username}</Typography>
-                <Typography variant="body2" color="text.secondary">{user.gmail}</Typography>
+                    {user.pronouns && (
+                    <Typography sx={{fontFamily: "Instrument Serif"}} variant="body2" color="text.secondary">{user.pronouns}</Typography>
+                    )}
+                    {user.bio && (
+                    <Typography  variant="body1" sx={{ mt: 1, textAlign: "center", fontFamily: "Instrument Serif" }}>{user.bio}</Typography>
+                    )}
+                  </Box>
+              </Box>
+             <Box sx={{ width: "100%", px: 2, py: 2 }}>
+  
+              <Typography
+                variant="h6"
+                sx={{
+                  mt: 2,
+                  mb: 1,
+                  textAlign: "left",
+                  fontWeight: 600,
+                  ml: 3,
+                  fontFamily: "Instrument Serif",
+                   color: "#243a2b"
+                }}
+              >
+                Book List
+              </Typography>
 
-                {user.pronouns && (
-                <Typography variant="body2" color="text.secondary">{user.pronouns}</Typography>
-                )}
-                {user.bio && (
-                <Typography variant="body1" sx={{ mt: 1, textAlign: "center" }}>{user.bio}</Typography>
-                )}
-
-                <Typography variant="h6" sx={{ mt: 3, alignSelf: "flex-start" }}>Book List</Typography>
-                {entries.length === 0 ? (
-                <Typography variant="body2" color="text.secondary">No books added yet.</Typography>
-                ) : (
-                <Box sx={{ width: "100%", mt: 1 }}>
-                    {entries.map(entry => {
+              {entries.length === 0 ? (
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: "left", ml: 3}}>
+                  No books added yet.
+                </Typography>
+              ) : (
+                <Box sx={{ width: "100%", mt: 1, ml: 2 }}>
+                  {entries.map((entry) => {
                     const book = books[entry.book_id];
+
                     return (
-                        <Box key={entry.id} onClick={() => handleBookClick(entry, book)} sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2, cursor: "pointer" }}>
+                      <Box
+                        key={entry.id}
+                        onClick={() => handleBookClick(entry, book)}
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: 2,
+                          mb: 2,
+                          cursor: "pointer",
+                          p: 1,
+                          borderRadius: 1,
+                          "&:hover": {
+                            backgroundColor: "action.hover",
+                          },
+                        }}
+                      >
+                        {/* Cover */}
                         {book?.thumbnail ? (
-                            <img src={book.thumbnail} alt={book.title} style={{ width: 48, height: 64, objectFit: "cover" }} />
+                          <img
+                            src={book.thumbnail}
+                            alt={book.title}
+                            style={{ width: 48, height: 64, objectFit: "cover" }}
+                          />
                         ) : (
-                            <Box sx={{ width: 48, height: 64, bgcolor: "grey.200" }} />
+                          <Box sx={{ width: 48, height: 64, bgcolor: "grey.200" }} />
                         )}
-                        <Box>
-                            <Typography variant="body1">{book?.title || entry.book_id}</Typography>
-                            <Typography variant="body2" color="text.secondary">Status: {entry.status}</Typography>
-                            {entry.rating && (
-                            <Typography variant="body2" color="text.secondary">Rating: {entry.rating}/5</Typography>
-                            )}
+
+                        {/* Text */}
+                        <Box sx={{ textAlign: "left" }}>
+                          <Typography variant="body1" sx={{ fontWeight: 600 , fontFamily: "Instrument Serif", color: "#243a2b"}}>
+                            {book?.title || entry.book_id}
+                          </Typography>
+
+                          <Typography variant="body2" color="text.secondary" sx={{fontFamily: "Instrument Serif", color: "#243a2b"}}>
+                            Status: {entry.status}
+                          </Typography>
+
+                          {entry.rating && (
+                            <Typography variant="body2" color="text.secondary" sx={{fontFamily: "Instrument Serif", color: "#243a2b"}}>
+                              Rating: {entry.rating}/10
+                            </Typography>
+                          )}
                         </Box>
-                        </Box>
+                      </Box>
                     );
-                    })}
+                  })}
                 </Box>
-                )}
+              )}
+            </Box>
             </Box>
             )}
         </DialogContent>
