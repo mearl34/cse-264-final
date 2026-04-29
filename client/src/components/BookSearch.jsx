@@ -18,7 +18,18 @@ function SearchBar({ onSearch, text }) {
       onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
     >
       <InputBase
-        sx={{ ml: 1, flex: 1 }}
+        sx={{
+             ml: 1, flex: 1,
+            fontFamily: "'Instrument Serif', serif",
+
+            "& input": {
+              fontFamily: "'Instrument Serif', serif",
+            },
+
+            "& input::placeholder": {
+              fontFamily: "'Instrument Serif', serif",
+            },
+          }}
         placeholder={text}
         inputProps={{ 'aria-label': 'Search' }}
         value={query}
