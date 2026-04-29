@@ -28,9 +28,11 @@ function App() {
         {user ? (
           <>
             <Box sx={{ display: 'flex', backgroundColor: "#43797B", marginTop: "0px", height: "120px", flexDirection: "row", alignItems: "center", justifyContent: "top" }}>
+              
               <Typography sx={{ fontFamily: "Instrument Serif", fontSize: '96px', fontWeight: "300", letterSpacing: '5%', color: "#E2FEFF"}}>
                 Bookworm
               </Typography>
+              <img src="/assets/worm.png" alt="worm" width={220} height={100} style={{ objectFit: "cover"  }}/>
             </Box>
             <nav
               style={{
