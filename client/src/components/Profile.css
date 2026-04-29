@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap');
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 32px;
+  font-family: 'Instrument Serif', serif;
+  color: #43797B;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.profile-container * {
+  font-family: 'Instrument Serif', serif;
+}
+
+.profile-container .MuiTypography-root {
+  font-family: 'Instrument Serif', serif !important;
+  text-align: center;
+}
+
+.profile-container button {
+  display: block;
+  margin: 8px auto;
+  background-color: #43797B;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.profile-container button:hover {
+  background-color: #2f5a5c;
+}

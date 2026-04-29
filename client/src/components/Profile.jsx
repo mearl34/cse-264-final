@@ -4,6 +4,7 @@ import { getUserByGid } from "../api/userApi";
 import { getEntries } from "../api/listApi";
 import BookInfo from "./BookInfo";
 import { createEntry, editEntry, checkEntryExists } from "../api/listApi";
+import './Profile.css'
 
 export default function Profile({uid, onLogout}) {
   const [user, setUser] = useState(null);
@@ -118,14 +119,14 @@ export default function Profile({uid, onLogout}) {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto", padding: 24 }}>
+    <div className="profile-container">
       <Avatar
         src={user.pfp || undefined}
         sx={{ width: 96, height: 96 }}
         onError={e => e.target.src = "https://www.gravatar.com/avatar/?d=mp"}
-        >
+      >
         {!user.pfp && user.username?.[0]?.toUpperCase()}
-        </Avatar>
+      </Avatar>
 
       <Typography variant="h5" style={{ marginTop: 12 }}>{user.username}</Typography>
       <Typography variant="body2" color="text.secondary">{user.gmail}</Typography>
