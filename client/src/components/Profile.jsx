@@ -5,13 +5,14 @@ import { getEntries } from "../api/listApi";
 import BookInfo from "./BookInfo";
 import { createEntry, editEntry, checkEntryExists } from "../api/listApi";
 import './Profile.css'
+import { deleteEntry } from "../api/listApi";
 
 export default function Profile({uid, onLogout}) {
   const [user, setUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [pronouns, setPronouns] = useState("");
   const [bio, setBio] = useState("");
-  const [isPrivate, setIsPrivate] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
   const [entries, setEntries] = useState([]);
   const [books, setBooks] = useState({});
   const [selectedBook, setSelectedBook] = useState(null);
@@ -21,6 +22,9 @@ export default function Profile({uid, onLogout}) {
     const loadUser = async () => {
       const data = await getUserByGid(uid);
       setUser(data);
+      setPronouns(data.pronouns || "");
+      setBio(data.bio || "");
+      setIsPrivate(data.is_private || false);  // add this
     };
 
     loadUser();
@@ -118,64 +122,94 @@ export default function Profile({uid, onLogout}) {
     }
   };
 
+  const handleDeleteEntry = async (id) => {
+    try {
+      await deleteEntry(id);
+      setEntries(prev => prev.filter(e => e.id !== id));
+    } catch (err) {
+      console.error("Failed to delete entry:", err);
+    }
+  };
+
   return (
     <div className="profile-container">
-      <Avatar
-        src={user.pfp || undefined}
-        sx={{ width: 96, height: 96 }}
-        onError={e => e.target.src = "https://www.gravatar.com/avatar/?d=mp"}
-      >
-        {!user.pfp && user.username?.[0]?.toUpperCase()}
-      </Avatar>
+      <div style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "24px 0",
+        backgroundImage: "url('/assets/flowers.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        borderRadius: "16px"
+      }}>
+        <Avatar
+          src={user.pfp || undefined}
+          sx={{ width: 96, height: 96 }}
+          onError={e => e.target.src = "https://www.gravatar.com/avatar/?d=mp"}
+        >
+          {!user.pfp && user.username?.[0]?.toUpperCase()}
+        </Avatar>
 
-      <Typography variant="h5" style={{ marginTop: 12 }}>{user.username}</Typography>
-      <Typography variant="body2" color="text.secondary">{user.gmail}</Typography>
+        <div style={{ backgroundColor: "#e6fde4", borderRadius: 16, marginTop: 16, padding: "12px 24px", textAlign: "center", width: "70%" }}>
+          <Typography variant="h5" style={{ marginTop: 12 }}>{user.username}</Typography>
+          <Typography variant="body2" color="text.secondary">{user.gmail}</Typography>
 
-      {user.pronouns && (
-        <Typography variant="body2" color="text.secondary">{user.pronouns}</Typography>
-      )}
-      {user.bio && (
-        <Typography variant="body1" style={{ marginTop: 8 }}>{user.bio}</Typography>
-      )}
-
-      <Typography variant="h6" style={{ marginTop: 24 }}>Book List</Typography>
-      {entries.length === 0 ? (
-        <Typography variant="body2" color="text.secondary">No books added yet.</Typography>
-      ) : (
-        <div style={{ marginTop: 8 }}>
-          {entries.map(entry => {
-            const book = books[entry.book_id];
-            return (
-              // submitting the book to the list on the button click
-              <div
-                key={entry.id}
-                onClick={() => handleBookClick(entry, book)}
-                style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, cursor: "pointer" }}
-              >
-                {book?.thumbnail ? (
-                  <img src={book.thumbnail} alt={book.title} style={{ width: 48, height: 64, objectFit: "cover" }} />
-                ) : (
-                  <div style={{ width: 48, height: 64, background: "#eee" }} />
-                )}
-                <div>
-                  <Typography variant="body1">{book?.title || entry.book_id}</Typography>
-                  <Typography variant="body2" color="text.secondary">Status: {entry.status}</Typography>
-                  {entry.rating && (
-                    <Typography variant="body2" color="text.secondary">Rating: {entry.rating}/10</Typography>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          {user.pronouns && (
+            <Typography variant="body2" color="text.secondary">{user.pronouns}</Typography>
+          )}
+          {user.bio && (
+            <Typography variant="body1" style={{ marginTop: 8 }}>{user.bio}</Typography>
+          )}
         </div>
-      )}
+      </div>
+      <div style={{ padding: "24px" }}>
+        <Typography variant="h6" style={{ marginTop: 24 }}>Book List</Typography>
+        {entries.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">No books added yet.</Typography>
+        ) : (
+          <div className="book-list" style={{ marginTop: 8, width: '100%' }}>
+            {entries.map(entry => {
+              const book = books[entry.book_id];
+              return (
+                <div
+                  key={entry.id}
+                  style={{ display: "flex", gap: 12, marginBottom: 12 }}
+                >
+                  <div onClick={() => handleBookClick(entry, book)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+                    {book?.thumbnail ? (
+                      <img src={book.thumbnail} alt={book.title} style={{ width: 48, height: 64, objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: 48, height: 64, background: "#eee" }} />
+                    )}
+                    <div style={{ textAlign: "left" }}>
+                      <Typography variant="body1">{book?.title || entry.book_id}</Typography>
+                      <Typography variant="body2" color="text.secondary">Status: {entry.status}</Typography>
+                      {entry.rating && (
+                        <Typography variant="body2" color="text.secondary">Rating: {entry.rating}/10</Typography>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteEntry(entry.id)}
+                    style={{ marginLeft: 'auto', backgroundColor: '#b63d3d', color: "#f4cccc" }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-      <button onClick={() => setEditing(!editing)} style={{ marginTop: 12 }}>
-        Edit Profile
-      </button>
-      <button onClick={onLogout} style={{ marginTop: 8, display: "block" }}>
-        Logout
-      </button>
+        <button onClick={() => setEditing(!editing)} style={{ marginTop: 12 }}>
+          Edit Profile
+        </button>
+        <button onClick={onLogout} style={{ marginTop: 8, display: "block" }}>
+          Logout
+        </button>
+      </div>
 
             
       { /* while editing you can update the prounouns and bio with a text box , aswell as change privacy*/ }
@@ -185,7 +219,7 @@ export default function Profile({uid, onLogout}) {
             <label>Pronouns</label>
             <input value={pronouns} onChange={e => setPronouns(e.target.value)} placeholder="e.g. she/her" />
           </div>
-          <div style={{ marginTop: 8 }}>
+          <div style={{ marginTop: 8, marginBottom: 16 }}>
             <label>Bio</label>
             <textarea value={bio} onChange={e => setBio(e.target.value)} placeholder="Write a short bio..." rows={3} />
           </div>
@@ -207,8 +241,10 @@ export default function Profile({uid, onLogout}) {
               </Select>
             </FormControl>
           </div>
-          <button onClick={handleSave} style={{ marginTop: 8 }}>Save</button>
-          <button onClick={() => setEditing(false)} style={{ marginLeft: 8 }}>Cancel</button>
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button onClick={handleSave}>Save</button>
+            <button onClick={() => setEditing(false)}>Cancel</button>
+          </div>
         </div>
       )}
 

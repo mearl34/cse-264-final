@@ -6,10 +6,10 @@
   align-items: center;
   max-width: 600px;
   margin: 40px auto;
-  padding: 32px;
+  padding: 0;
   font-family: 'Instrument Serif', serif;
   color: #43797B;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: #E2FEFF;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
@@ -36,4 +36,51 @@
 
 .profile-container button:hover {
   background-color: #2f5a5c;
+}
+
+.profile-container .book-list .MuiTypography-root {
+  text-align: left !important;
+}
+
+.profile-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.profile-container input,
+.profile-container textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #43797B;
+  background-color: rgba(255, 255, 255, 0.7);
+  font-family: 'Instrument Serif', serif;
+  font-size: 1rem;
+  color:rgb(23, 17, 11);
+  box-sizing: border-box;
+}
+
+.profile-container input:focus,
+.profile-container textarea:focus {
+  outline: none;
+  border-color: #2f5a5c;
+}
+
+.profile-container .MuiSelect-select,
+.profile-container .MuiMenuItem-root,
+.profile-container .MuiInputLabel-root {
+  font-family: 'Instrument Serif', serif !important;
+}
+
+.MuiMenu-paper .MuiMenuItem-root {
+  font-family: 'Instrument Serif', serif !important;
+}
+
+.profile-container .MuiInputLabel-root {
+  color: #43797B !important;
+}
+
+.profile-container .MuiOutlinedInput-notchedOutline {
+  border-color: #43797B !important;
 }

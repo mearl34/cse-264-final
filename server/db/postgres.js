@@ -35,13 +35,13 @@ export const addUser = async (gmail, gid, username,pronouns, pfp, bio, is_privat
 }
 
 //delete a user by uid
-export const deleteUser = async (uid) => {
+export const deleteUser = async (id) => {
   const text = `
     DELETE FROM users
     WHERE uid = $1
     RETURNING *;
   `
-  const res = await query(text, [uid])
+  const res = await query(text, [id])
   return res.rows[0]
 }
 
@@ -134,7 +134,7 @@ export const deleteEntry = async (id) => {
     RETURNING *;
   `
 
-  const res = await query(text, [uid, book_id])
+  const res = await query(text, [id])
   return res.rows[0]
 }
 
