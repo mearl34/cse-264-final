@@ -3,6 +3,7 @@ import BookSearch from '../components/BookSearch';
 import BookInfo from './BookInfo';
 import { createEntry, editEntry, checkEntryExists } from '../api/listApi';
 import UserSearch from './UserSearch';
+import { motion } from "framer-motion";
 import { ToggleButton, 
   ToggleButtonGroup, 
   Box, 
@@ -212,7 +213,19 @@ function Home({ user }) {
       <Box
         sx={{display: "flex", alignItems: "center", justifyContent: "center",gap: 2,}}
       >
-        <img src="/assets/ladybug.png" alt="ladybug" style={{transform: "scaleX(-1)", height: "50px"}}/>
+        <motion.img
+            src="/assets/ladybug.png"
+            alt="ladybug"
+            style={{ height: 50}}
+            initial={{ scaleX: -1 }}
+            whileHover={{
+              rotate: [0, -10, 10, -10, 10, 0],
+              transition: {
+                repeat: Infinity,
+                duration: 0.6,
+              },
+            }}
+          />
       
         {/**toggle to switch between search bars */}
         <ToggleButtonGroup
@@ -226,7 +239,18 @@ function Home({ user }) {
           <ToggleButton sx={{fontFamily: "Instrument Serif",fontWeight: 600,}} value="books">Books</ToggleButton>
           <ToggleButton sx={{fontFamily: "Instrument Serif",fontWeight: 600,}} value="users">Users</ToggleButton>
         </ToggleButtonGroup>
-           <img src="/assets/ladybug.png" alt="ladybug"   style={{ height: "50px",}}/>
+           <motion.img
+            src="/assets/ladybug.png"
+            alt="ladybug"
+            style={{ height: 50 }}
+            whileHover={{
+              rotate: [0, -10, 10, -10, 10, 0],
+              transition: {
+                repeat: Infinity,
+                duration: 0.6,
+              },
+            }}
+          />
       </Box>
       {searchType === "books" ? (
     <>
